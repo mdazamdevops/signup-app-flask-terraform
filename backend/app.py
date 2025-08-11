@@ -1,9 +1,10 @@
 import os
 from datetime import datetime
-from flask import Flask, request, jsonify
+
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 CORS(app)
@@ -13,7 +14,6 @@ DB_PATH = os.path.join(BASE_DIR, 'database.db')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 db = SQLAlchemy(app)
 
@@ -34,16 +34,18 @@ class User(db.Model):
     def check_password(self, password):
         """Checks if the provided password matches the hash."""
         return check_password_hash(self.password_hash, password)
-    
+
     def to_dict(self):
         """Converts user object to a dictionary (excluding password)."""
-        return {
+        data = {
             "username": self.username,
             "email": self.email,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "last_login": self.last_login.isoformat() if self.last_login else None,
             "login_count": self.login_count
         }
+        data["created_at"] = self.created_at.isoformat() if self.created_at else None
+        data["last_login"] = self.last_login.isoformat() if self.last_login else None
+        return data
+
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -60,7 +62,7 @@ def signup():
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username already exists"}), 409
-    
+
     if email and User.query.filter_by(email=email).first():
         return jsonify({"error": "Email already registered"}), 409
 
@@ -70,10 +72,12 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({
+    response_data = {
         "message": "Account created successfully!",
         "user": new_user.to_dict()
-    }), 201
+    }
+    return jsonify(response_data), 201
+
 
 @app.route('/api/signin', methods=['POST'])
 def signin():
@@ -83,7 +87,7 @@ def signin():
 
     username = data['username'].strip()
     password = data['password']
-    
+
     user = User.query.filter_by(username=username).first()
 
     if not user or not user.check_password(password):
@@ -93,29 +97,19 @@ def signin():
     user.login_count = user.login_count + 1
     db.session.commit()
 
-    return jsonify({
+    response_data = {
         "message": "Login successful!",
         "user": user.to_dict()
-    }), 200
+    }
+    return jsonify(response_data), 200
+
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
     """Get all users (passwords excluded)"""
     users = User.query.all()
-
     users_list = [user.to_dict() for user in users]
     return jsonify(users_list)
 
-
-
-if __name__ == '__main__':
-   
-    with app.app_context():
-        db.create_all()
-    
-    print("=" * 50)
-    print("🔐 Flask Server with SQLite DB Starting...")
-    print(f"Database located at: {DB_PATH}")
-    print("=" * 50)
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
+# The if __name__ == '__main__': block has been removed.
+# Gunicorn will start the app directly.
