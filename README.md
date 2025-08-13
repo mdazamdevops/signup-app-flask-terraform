@@ -62,26 +62,6 @@ To log in to Docker Hub securely, the pipeline uses encrypted secrets stored in 
 * **`DOCKERHUB_TOKEN`**: Stores a secure Docker Hub Access Token used as a password.
 
 ---
-## CI/CD with Jenkins
-
-As an alternative to GitHub Actions, this project also includes a CI/CD pipeline configured for **Jenkins**, one of the most popular and powerful open-source automation servers.
-
-#### How the Pipeline Was Built
-The entire Jenkins workflow is defined in the `Jenkinsfile` located in the project's root directory. This file uses a Declarative Pipeline syntax to define all the stages for building and testing the application.
-
-#### The Pipeline's Workflow: Step-by-Step
-When the pipeline is run in Jenkins (either manually or via a webhook), the following stages are executed:
-
-1.  **Checkout**: Jenkins automatically checks out the latest code from the Git repository.
-2.  **Test Backend**: This stage runs inside a temporary Docker container (`python:3.10-slim`). It executes the `pip install` command to get dependencies and then runs `flake8 .` to lint the Python code.
-3.  **Test Frontend**: This stage runs in a separate `node:18-alpine` container. It uses `npm ci` to install dependencies and `npx eslint .` to check the JavaScript code quality.
-4.  **Build & Push Backend**: If all tests pass, this stage uses Docker to build the backend image from its `Dockerfile`.
-5.  **Build & Push Frontend**: Finally, this stage builds the frontend image from its `Dockerfile`. Both build stages use `docker.withRegistry()` to securely log in to Docker Hub and push the new images.
-
-#### Secure Credential Management
-Instead of GitHub Secrets, Jenkins uses its built-in **Credentials Manager** (`Manage Jenkins > Credentials`). For this pipeline, a "Username with password" credential with the ID `dockerhub-token` was created to securely store the Docker Hub username and access token.
-
----
 ## Infrastructure as Code (IaC) with Terraform
 
 To automate the creation of the infrastructure needed to run our application, this project uses **Terraform**.
