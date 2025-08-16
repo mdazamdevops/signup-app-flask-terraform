@@ -1,124 +1,23 @@
-# Simple User Signup & Login Application
+# DevOps Internship Task 3 – Infrastructure as Code (IaC) with Terraform
+### Elevate Labs: Empowering the Future of DevOps
+This project is a testament to the high-quality, hands-on learning experience provided by Elevate Labs. Their internship program is dedicated to empowering the next generation of DevOps professionals by offering practical, real-world challenges that build foundational skills and a deep understanding of modern software development practices.
 
-### Introduction
+### Overview
+The objective of this task is to provision a local Docker container using Terraform. This task provides hands-on experience with Infrastructure as Code (IaC), a fundamental practice in modern DevOps. By defining infrastructure in code, we can automate the provisioning process, making it repeatable, scalable, and version-controlled.
 
-Welcome to this full-stack user authentication application. This project was built from the ground up to serve as a practical example of a secure, modern web application. It features a Python backend powered by the Flask framework and a dynamic, user-friendly frontend built with standard HTML, CSS, and JavaScript.
+### Objective
+Provision a local Docker container using Terraform.
 
-**Project created by Mohd Azam Uddin.**
+Understand the core concepts of Infrastructure as Code.
 
----
-## What is this App?
+Learn to use Terraform commands like init, plan, and apply.
 
-This application provides a fundamental user authentication system. Its core purpose is to allow new users to create a secure account and for existing users to sign in. It serves as a solid foundation for any web application that requires user management.
+### Tools & Technologies
+Terraform – The open-source IaC tool used to define and provision infrastructure.
 
-**Key Features:**
-* Secure user registration with password hashing.
-* User login and a personalized welcome dashboard.
-* A clean, responsive user interface.
+Docker – The containerization platform that serves as the target infrastructure for this task.
 
----
-## How It Was Built - The Journey
-
-This project started with a simple goal: create a functional signup system. The process evolved as we tackled common development challenges.
-
-#### 1. The Initial Backend
-The first version of the application was a simple **Flask** server, storing user data in a `users.json` file. This approach quickly led to an **"Internal Server Error"** due to file permission issues and the risk of data corruption.
-
-#### 2. Upgrading to a Real Database
-To fix the errors and make the application more stable, the backend was upgraded to use a proper **SQLite** database. The `Flask-SQLAlchemy` library was used to manage the database, which solved all the data storage problems.
-
-#### 3. Building the Frontend
-The user interface was built with standard **HTML**, **CSS**, and **vanilla JavaScript**. A simple **Node.js/Express** server is used to serve the `index.html` file and manage the local development environment.
-
----
-## Containerization with Docker
-
-To ensure the application runs reliably in any environment, it has been fully containerized using Docker.
-
-#### What is Containerization?
-Imagine a standardized shipping container that holds not just your application's code, but also the specific version of Python or Node.js it needs, all the required libraries, and the necessary system settings. This "box" can be run on any machine that has Docker installed, guaranteeing that the app will work the same way for a developer, a tester, or in a production environment. This solves the classic "it works on my machine" problem.
-
-#### Creating the Dockerfiles
-A `Dockerfile` is a blueprint for building a container image. This project uses two separate `Dockerfile`s for the backend and frontend, which detail the steps to package each service.
-
----
-## Automation with GitHub Actions CI/CD
-
-This project uses a fully automated CI/CD (Continuous Integration/Continuous Deployment) pipeline built with GitHub Actions.
-
-#### What is CI/CD and Why Use It?
-CI/CD is a modern software development practice that automates the process of building, testing, and deploying code.
-* **Continuous Integration (CI)** automatically tests the code every time a change is pushed. This catches bugs early and ensures that new code doesn't break existing features.
-* **Continuous Deployment (CD)** automatically builds the application and deploys it after it passes all the tests.
-
-We use this to save time, reduce human error, and ensure that only high-quality, tested code makes it to production.
-
-#### How the Pipeline Was Built
-The entire workflow is defined in a single YAML file located at `.github/workflows/main.yml`. This file contains all the instructions for the automated workflow, which runs on every push to the `main` branch to test, build, and push the Docker images to Docker Hub.
-
-#### Secrets and Variables
-To log in to Docker Hub securely, the pipeline uses encrypted secrets stored in the GitHub repository's settings (`Settings > Secrets and variables > Actions`).
-* **`DOCKERHUB_USERNAME`**: Stores the Docker Hub username.
-* **`DOCKERHUB_TOKEN`**: Stores a secure Docker Hub Access Token used as a password.
-
----
-## Infrastructure as Code (IaC) with Terraform
-
-To automate the creation of the infrastructure needed to run our application, this project uses **Terraform**.
-
-#### What is Infrastructure as Code?
-Infrastructure as Code (IaC) is the practice of managing and provisioning infrastructure (like servers, networks, and containers) through code, rather than through manual processes. A configuration file acts as a blueprint for your infrastructure. This makes your setup repeatable, version-controlled, and easy to manage.
-
-#### How Terraform Was Used
-The entire application stack is defined in a single configuration file: `main.tf`. This file tells Terraform how to:
-1.  Connect to the local Docker engine.
-2.  Pull the `auth-backend` and `auth-frontend` images from Docker Hub.
-3.  Create a dedicated network for the containers to communicate.
-4.  Create and run the backend and frontend containers with the correct ports and volumes mapped.
-
-#### The Terraform Workflow Commands
-The following commands were used to manage the infrastructure:
-* **Initialize the project:** This command downloads the necessary Docker provider for Terraform.
-    ```bash
-    terraform init
-    ```
-* **Preview the changes:** This command shows a "plan" of what infrastructure will be created, changed, or destroyed.
-    ```bash
-    terraform plan
-    ```
-* **Apply the changes:** This command executes the plan, creating and running the Docker containers.
-    ```bash
-    terraform apply
-    ```
-* **Destroy the infrastructure:** This command stops and removes all resources created by Terraform.
-    ```bash
-    terraform destroy
-    ```
-
----
-## Technologies & Dependencies Used
-
-* **Backend**: Python, Flask, Flask-SQLAlchemy, Flask-CORS, Gunicorn
-* **Frontend**: HTML5, CSS3, Vanilla JavaScript, Node.js, Express.js
-* **Containerization**: Docker, Docker Compose
-* **CI/CD**: GitHub Actions, Jenkins
-* **IaC**: Terraform
-
----
-## How to Run Locally
-
-The recommended way to run this application is with Docker Compose, as it handles both the frontend and backend setup automatically.
-
-1.  Clone this repository.
-2.  Ensure Docker and Docker Compose are installed and running.
-3.  From the project's root directory, run the command:
-    ```bash
-    docker-compose up --build
-    ```
-4.  Access the application in your web browser at `http://localhost:3000`.
-
----
-## Final Project Structure
+### Project Structure
 ```
 .
 ├── .github/
@@ -137,3 +36,70 @@ The recommended way to run this application is with Docker Compose, as it handle
 ├── Jenkinsfile
 ├── main.tf
 └── README.md
+```
+
+### Full Procedure: Step-by-Step Guide
+
+### 1. Configure the Docker Provider
+Terraform uses providers to interact with different platforms, such as AWS, Azure, or in this case, Docker. The first step is to configure the Docker provider in the main Terraform configuration file, typically named main.tf.
+
+### 2. Write the Terraform Code
+Next, you write the Terraform code to create the Docker container. This involves defining the docker_image and docker_container resources. The code specifies which image to use (e.g., nginx:latest), the container's name, and any port mappings.
+
+### 3. Run Terraform Commands
+a. Initialize the project:
+```
+terraform init
+```
+This command initializes the Terraform working directory and downloads the necessary Docker provider. It's the first command you run in a new or a cloned Terraform project.
+
+b. Preview the changes:
+```
+terraform plan
+```
+This command creates an execution plan. It shows you exactly what Terraform will do—which resources will be created, changed, or destroyed—before any changes are applied to your infrastructure.
+
+c. Apply the changes:
+```
+terraform apply
+```
+This command applies the changes required to reach the desired state defined in your main.tf file. It will create and run the Docker container as specified in your code. You will need to confirm the action by typing yes.
+
+d. Destroy the infrastructure:
+```
+terraform destroy
+```
+After you are done with the infrastructure, you can use this command to stop and remove all resources created by Terraform. It's a clean way to tear down your environment.
+
+4. Check the Terraform State
+```
+terraform state
+```
+This command provides information about the state of your infrastructure managed by Terraform. The state file (terraform.tfstate) is crucial as it maps the real-world resources to your configuration and keeps track of metadata.
+
+## Learning Outcomes
+By completing this task, you will:
+
+* Understand the core principles and benefits of Infrastructure as Code.
+
+* Gain practical experience with Terraform's workflow and command-line interface.
+
+* Learn how to provision and manage a local Docker container using a declarative approach.
+
+* Understand the role of Terraform's state file in managing infrastructure.
+
+### Interview Questions to Practice
+* What is IaC?
+* How does Terraform work?
+* What is the Terraform state file?
+* Explain the difference between terraform apply and terraform plan.
+* What are Terraform providers?
+* What is resource dependency in Terraform?
+* How do you handle secret variables in Terraform?
+* Explain the benefits of using Terraform.
+
+### Creator
+Name: Mohd Azam Uddin
+Role: DevOps Intern
+
+* Contribution: Implemented a simple IaC project to provision a Docker container, providing a foundational understanding of Terraform.
